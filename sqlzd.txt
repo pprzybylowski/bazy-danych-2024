@@ -1,0 +1,48 @@
+
+ZADANIE 1
+CREATE TABLE postac(id_postaci INTEGER primary key auto_increment, nazwa VARCHAR(40), rodzaj ENUM('wiking','ptak','kobieta'), data_ur DATE, wiek INTEGER unsigned);
+INSERT INTO postac(nazwa, rodzaj, data_ur, wiek) 
+VALUES ('Bjorn', 'wiking', '1980-05-14', 44),
+       ('Drozd', 'ptak', '2022-06-01', 2),
+       ('Tesciowa', 'kobieta', '1936-10-12', 87);
+UPDATE postac
+SET wiek = 88
+WHERE nazwa ='Tesciowa';
+
+
+
+
+ZADANIE 2
+CREATE TABLE walizka(id_walizki INTEGER auto_increment primary key, pojemnosc INTEGER unsigned, kolor ENUM('rozowy','czerwony','teczowy','zolty') DEFAULT 'rozowy', id_wlasciciela INTEGER, FOREIGN KEY (id_wlasciciela) REFERENCES postac(id_postaci) ON DELETE CASCADE);
+
+INSERT INTO walizka(pojemnosc, kolor, id_wlasciciela)
+VALUES
+(50, 'rozowy', (SELECT id_postaci FROM postac WHERE nazwa = 'Bjorn'));
+(60, 'zolty', (SELECT id_postaci FROM postac WHERE nazwa = 'Tesciowa'));
+
+
+ZADANIE 3
+CREATE TABLE izba(adres_budynku VARCHAR(100), nazwa_izby VARCHAR(100), metraz INTEGER unsigned, wlasciciel INTEGER, primary key (adres_budynku, nazwa_izby), foreign key (wlasciciel) REFERENCES postac(id_postaci) ON DELETE SET NULL);
+
+ALTER TABLE izba ADD COLUMN kolor_izby VARCHAR(20) DEFAULT 'czarny' AFTER metraz;
+
+INSERT INTO izba (adres_budynku, nazwa_izby, metraz, wlasciciel)
+VALUES('Wioska 1', 'spizarnia', 20, (SELECT id_postaci FROM postac WHERE nazwa = 'Bjorn'));
+
+
+
+ZADANIE 4
+CREATE TABLE przetwory (id_przetworu INTEGER auto_increment primary key,
+rok_produkcji YEAR DEFAULT (1654), 
+id_wykonawcy INTEGER, 
+zawartosc VARCHAR(100), 
+dodatek VARCHAR(100) DEFAULT 'papryczka chilli', 
+id_konsumenta INTEGER, 
+FOREIGN KEY(id_wykonawcy) REFERENCES postac(id_postaci),
+FOREIGN KEY (id_konsumenta) REFERENCES postac(id_postaci));
+
+##INSERT INTO przetwory(rok_produkcji, id_wykonawcy, zawartosc, id_konsumenta)
+VALUES (1654, 
+1,
+'bigos',
+3);##-do poprawy
